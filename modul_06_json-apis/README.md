@@ -121,3 +121,71 @@ Plaintext
 Aufgabe: delectus aut autem | Erledigt: False
 Aufgabe: quis ut nam facilis et officia qui | Erledigt: False
 ...
+
+## Modul 6.2
+🟢 API-Übung 2: Die User-Datenbank filtern & speichern
+1. Was wollen wir erledigen?
+
+Stell dir vor, du holst dir aus dem HR-System (Personalabteilung) über eine API die Stammdaten der Mitarbeiter. Wir wollen diese Daten direkt in ein Pandas-DataFrame laden, uns ansehen, wer in einer bestimmten Stadt wohnt, und diese bereinigten Daten als neue CSV-Datei auf deiner Festplatte speichern (das klassische "Load" aus dem ETL-Prinzip!).
+2. Was nutzen wir dafür, und Beispielcode
+
+Wir nutzen requests und die User-Schnittstelle des Test-Servers. Weil das JSON verschachtelt ist (die Adresse liegt in einem Unter-Dictionary), hilft uns Pandas mit einer genialen Funktion namens pd.json_normalize(). Die klappt die verschachtelten Ordnerstrukturen automatisch für uns flach!
+
+Erstelle im Ordner modul_06_json-apis eine neue Datei namens main6_2.py.
+
+Hier ist dein Startcode:
+Python
+
+import pandas as pd
+import requests
+
+### Die API für Mitarbeiter-Stammdaten
+url = "https://jsonplaceholder.typicode.com/users"
+
+### 1. Daten abrufen
+antwort = requests.get(url)
+user_daten = antwort.json()
+
+### 2. Der Pandas-Flachklopfer: Macht aus verschachteltem JSON eine flache Tabelle
+df = pd.json_normalize(user_daten)
+
+### Wir schauen uns mal an, welche Spalten Pandas daraus gebaut hat:
+print(df[["name", "email", "address.city"]])
+
+3. Meine eigene Anwendung (Deine Challenge) 🚀
+
+Jetzt verbinden wir alles, was du bisher gelernt hast (Filtern aus Modul 4, Speichern als CSV).
+
+Deine Aufgabe in main6_2.py:
+
+    Lass das Einlesen und das json_normalize genau so stehen.
+
+    Lösche das Test-print(...) am Ende.
+
+    Filtern: Erstelle eine Variable gefiltertes_df. Filtere die Tabelle so, dass nur noch Mitarbeiter angezeigt werden, deren Stadt ("address.city") exakt gleich "South Elvis" ist. (Erinnerung: In Pandas filtert man mit df[df["Spaltenname"] == "Wert"]).
+
+    Speichern: Schreibe dieses gefilterte Ergebnis als echte CSV-Datei in deinen Modul-6-Ordner. Das geht in Pandas mit einer einzigen Zeile:
+    Python
+
+    gefiltertes_df.to_csv("modul_06_json-apis/export_elvis.csv", index=False)
+
+    (Das index=False sorgt dafür, dass die Durchnummerierung von Pandas nicht als eigene Spalte in der CSV landet).
+
+Führe das Skript im Terminal aus. Wenn alles klappt, schließt sich das Programm ohne Mucken, und in VS Code ploppt links in deiner Ordnerstruktur plötzlich die brandneue Datei export_elvis.csv auf.
+
+Schaffst du es, die HR-Daten zu filtern und wegzuspeichern?
+
+## Modul 6.3
+Wir wechseln das Szenario innerhalb unseres unzerstörbaren Test-Servers. Diesmal greifen wir uns die Blog-Posts ab.
+
+Deine Aufgabe in einer neuen Datei main6_3.py:
+
+    Extract: Rufe die Daten von der URL [https://jsonplaceholder.typicode.com/posts](https://jsonplaceholder.typicode.com/posts) ab. (Hinweis: Dieses JSON ist nicht verschachtelt, du kannst also ganz normal pd.DataFrame(daten) statt json_normalize nutzen).
+
+    Transform: Filtere die Tabelle so, dass nur noch die Posts angezeigt werden, die von der userId mit dem Wert 3 geschrieben wurden. (Achtung: IDs sind im JSON echte Zahlen, also ohne Anführungszeichen filtern: == 3).
+
+    Load: Speichere dieses gefilterte DataFrame als neue Datei user_3_posts.csv in deinem Modul-6-Ordner (wieder mit index=False).
+
+Versuche, die Datei komplett von der leeren Seite an aufzubauen. Wenn du Imports oder Befehle vergisst, ist das völlig normal – spickel ruhig in den alten Dateien, wenn du feststeckst!
+
+Schaffst du es, die Pipeline für User 3 ganz allein ans Laufen zu bringen?
